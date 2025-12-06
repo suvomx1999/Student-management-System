@@ -1,0 +1,41 @@
+export type Student = {
+  id?: number
+  name: string
+  department?: string
+  email?: string
+}
+
+const headers = {
+  'Content-Type': 'application/json',
+}
+
+export async function getStudents(): Promise<Student[]> {
+  const res = await fetch('/api/students')
+  if (!res.ok) throw new Error('Failed to load students')
+  return res.json()
+}
+
+export async function createStudent(body: Omit<Student, 'id'>): Promise<Student> {
+  const res = await fetch('/api/students', {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(body),
+  })
+  if (!res.ok) throw new Error('Failed to create student')
+  return res.json()
+}
+
+export async function updateStudent(id: number, body: Omit<Student, 'id'>): Promise<Student> {
+  const res = await fetch(`/api/students/${id}`, {
+    method: 'PUT',
+    headers,
+    body: JSON.stringify(body),
+  })
+  if (!res.ok) throw new Error('Failed to update student')
+  return res.json()
+}
+
+export async function deleteStudent(id: number): Promise<void> {
+  const res = await fetch(`/api/students/${id}`, { method: 'DELETE' })
+  if (!res.ok) throw new Error('Failed to delete student')
+}
