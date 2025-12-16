@@ -1,4 +1,5 @@
 /Users/suvo/Student/src/main/java/com/example/Student/service/impl/StudentServiceImpl.java
+/Users/suvo/Student/src/main/java/com/example/Student/config/CorsConfig.java
 /Users/suvo/Student/src/main/java/com/example/Student/repository/StudentRepository.java
 /Users/suvo/Student/src/main/java/com/example/Student/controller/StudentController.java
 /Users/suvo/Student/src/main/java/com/example/Student/service/StudentService.java

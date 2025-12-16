@@ -1,6 +1,7 @@
 com/example/Student/StudentManagementApplication.class
 com/example/Student/service/impl/StudentServiceImpl.class
 com/example/Student/repository/StudentRepository.class
+com/example/Student/config/CorsConfig.class
 com/example/Student/model/Student.class
 com/example/Student/controller/HomeController.class
 com/example/Student/service/StudentService.class
