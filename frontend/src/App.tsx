@@ -106,6 +106,18 @@ function App() {
               >
                 Results
               </button>
+              <button
+                onClick={() => navigate('/departments')}
+                className="px-3 py-2 border-2 border-gray-300 bg-white text-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400"
+              >
+                Departments
+              </button>
+              <button
+                onClick={() => navigate('/subjects')}
+                className="px-3 py-2 border-2 border-gray-300 bg-white text-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400"
+              >
+                Subjects
+              </button>
             </div>
           </div>
         </div>

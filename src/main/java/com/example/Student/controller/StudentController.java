@@ -1,6 +1,9 @@
 package com.example.Student.controller;
 
+import com.example.Student.dto.StudentDTO;
+import com.example.Student.model.Department;
 import com.example.Student.model.Student;
+import com.example.Student.service.DepartmentService;
 import com.example.Student.service.StudentService;
 
 import org.springframework.http.ResponseEntity;
@@ -17,14 +20,24 @@ import jakarta.validation.Valid;
 public class StudentController {
 
     private final StudentService service;
+    private final DepartmentService departmentService;
 
-    public StudentController(StudentService service) {
+    public StudentController(StudentService service, DepartmentService departmentService) {
         this.service = service;
+        this.departmentService = departmentService;
     }
 
     @PostMapping
-    public ResponseEntity<Student> createStudent(@Valid @RequestBody Student student) {
-        Student created = service.createStudent(student);
+    public ResponseEntity<Student> createStudent(@Valid @RequestBody StudentDTO dto) {
+        Department dept = dto.getDepartment() != null && !dto.getDepartment().isBlank()
+                ? departmentService.getOrCreateByName(dto.getDepartment())
+                : null;
+        Student toCreate = new Student();
+        toCreate.setName(dto.getName());
+        toCreate.setEmail(dto.getEmail());
+        toCreate.setCgpa(dto.getCgpa());
+        toCreate.setDepartment(dept);
+        Student created = service.createStudent(toCreate);
         return ResponseEntity.created(URI.create("/api/students/" + created.getId())).body(created);
     }
 
@@ -41,9 +54,17 @@ public class StudentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Student> updateStudent(@PathVariable Integer id, @Valid @RequestBody Student student) {
+    public ResponseEntity<Student> updateStudent(@PathVariable Integer id, @Valid @RequestBody StudentDTO dto) {
+        Department dept = dto.getDepartment() != null && !dto.getDepartment().isBlank()
+                ? departmentService.getOrCreateByName(dto.getDepartment())
+                : null;
+        Student toUpdate = new Student();
+        toUpdate.setName(dto.getName());
+        toUpdate.setEmail(dto.getEmail());
+        toUpdate.setCgpa(dto.getCgpa());
+        toUpdate.setDepartment(dept);
         try {
-            Student updated = service.updateStudent(id, student);
+            Student updated = service.updateStudent(id, toUpdate);
             return ResponseEntity.ok(updated);
         } catch (RuntimeException ex) {
             return ResponseEntity.notFound().build();

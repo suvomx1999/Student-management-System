@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Login from './Login'
 import ProtectedRoute from './ProtectedRoute'
 import Results from './Results'
+import Departments from './Departments'
+import Subjects from './Subjects'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -25,6 +27,22 @@ createRoot(document.getElementById('root')!).render(
           element={
             <ProtectedRoute>
               <Results />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/departments"
+          element={
+            <ProtectedRoute>
+              <Departments />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/subjects"
+          element={
+            <ProtectedRoute>
+              <Subjects />
             </ProtectedRoute>
           }
         />

@@ -6,6 +6,17 @@ export type Student = {
   cgpa?: number
 }
 
+export type Department = {
+  id: number
+  name: string
+}
+
+export type Subject = {
+  id: number
+  name: string
+  department?: string
+}
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? ''
 
 const headers = {
@@ -51,4 +62,31 @@ export async function updateCgpa(id: number, cgpa: number | null): Promise<Stude
   })
   if (!res.ok) throw new Error('Failed to update CGPA')
   return res.json()
+}
+
+export async function getDepartments(): Promise<Department[]> {
+  const res = await fetch(`${API_BASE}/api/departments`)
+  if (!res.ok) throw new Error('Failed to load departments')
+  return res.json()
+}
+
+export async function getSubjectsByDepartment(department: string): Promise<Subject[]> {
+  const res = await fetch(`${API_BASE}/api/subjects?department=${encodeURIComponent(department)}`)
+  if (!res.ok) throw new Error('Failed to load subjects')
+  return res.json()
+}
+
+export async function createSubject(name: string, department: string): Promise<Subject> {
+  const res = await fetch(`${API_BASE}/api/subjects`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ name, department }),
+  })
+  if (!res.ok) throw new Error('Failed to create subject')
+  return res.json()
+}
+
+export async function deleteSubject(id: number): Promise<void> {
+  const res = await fetch(`${API_BASE}/api/subjects/${id}`, { method: 'DELETE' })
+  if (!res.ok) throw new Error('Failed to delete subject')
 }
