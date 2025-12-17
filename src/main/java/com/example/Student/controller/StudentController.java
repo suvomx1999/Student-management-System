@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.validation.Valid;
 
@@ -53,5 +54,16 @@ public class StudentController {
     public ResponseEntity<Void> deleteStudent(@PathVariable Integer id) {
         service.deleteStudent(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/cgpa")
+    public ResponseEntity<Student> updateCgpa(@PathVariable Integer id, @RequestBody Map<String, Double> payload) {
+        Double cgpa = payload.get("cgpa");
+        try {
+            Student updated = service.updateCgpa(id, cgpa);
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

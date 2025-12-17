@@ -10,4 +10,5 @@ public interface StudentService {
     Optional<Student> getStudentById(Integer id);
     Student updateStudent(Integer id, Student student);
     void deleteStudent(Integer id);
+    Student updateCgpa(Integer id, Double cgpa);
 }

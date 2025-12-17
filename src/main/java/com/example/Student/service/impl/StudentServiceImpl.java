@@ -38,6 +38,9 @@ public class StudentServiceImpl implements StudentService {
             existing.setName(student.getName());
             existing.setDepartment(student.getDepartment());
             existing.setEmail(student.getEmail());
+            if (student.getCgpa() != null) {
+                existing.setCgpa(student.getCgpa());
+            }
             return repo.save(existing);
         }).orElseThrow(() -> new RuntimeException("Student not found with id " + id));
     }
@@ -45,5 +48,13 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public void deleteStudent(Integer id) {
         repo.deleteById(id);
+    }
+
+    @Override
+    public Student updateCgpa(Integer id, Double cgpa) {
+        return repo.findById(id).map(existing -> {
+            existing.setCgpa(cgpa);
+            return repo.save(existing);
+        }).orElseThrow(() -> new RuntimeException("Student not found with id " + id));
     }
 }

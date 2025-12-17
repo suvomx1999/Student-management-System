@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import { createStudent, deleteStudent, getStudents, updateStudent, type Student } from './api'
 import { Users, Plus, Edit2, Trash2, X, Search, GraduationCap } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 function App() {
   const [students, setStudents] = useState<Student[]>([])
@@ -79,6 +80,7 @@ function App() {
     setShowForm(false)
   }
 
+  const navigate = useNavigate()
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
       <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-10">
@@ -93,9 +95,17 @@ function App() {
                 <p className="text-sm text-gray-500">Manage your student records</p>
               </div>
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Users className="w-4 h-4" />
-              <span className="font-medium">{students.length} Students</span>
+            <div className="flex items-center gap-4 text-sm text-gray-600">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4" />
+                <span className="font-medium">{students.length} Students</span>
+              </div>
+              <button
+                onClick={() => navigate('/results')}
+                className="px-3 py-2 border-2 border-gray-300 bg-white text-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400"
+              >
+                Results
+              </button>
             </div>
           </div>
         </div>
@@ -166,6 +176,7 @@ function App() {
                   placeholder="Enter email address"
                 />
               </div>
+              
               <div className="flex items-center gap-3 pt-2">
                 <button
                   type="submit"
@@ -208,6 +219,7 @@ function App() {
                     <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">Name</th>
                     <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">Department</th>
                     <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">Email</th>
+                    
                     <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">Actions</th>
                   </tr>
                 </thead>
@@ -224,6 +236,7 @@ function App() {
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">{s.department || '-'}</td>
                       <td className="px-6 py-4 text-sm text-gray-600">{s.email || '-'}</td>
+                      
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <button onClick={() => onEdit(s)} className="p-2 text-indigo-600 hover:bg-indigo-100 rounded-lg" title="Edit">

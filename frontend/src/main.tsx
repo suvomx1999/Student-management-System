@@ -5,6 +5,7 @@ import App from './App.tsx'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Login from './Login'
 import ProtectedRoute from './ProtectedRoute'
+import Results from './Results'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -16,6 +17,14 @@ createRoot(document.getElementById('root')!).render(
           element={
             <ProtectedRoute>
               <App />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/results"
+          element={
+            <ProtectedRoute>
+              <Results />
             </ProtectedRoute>
           }
         />

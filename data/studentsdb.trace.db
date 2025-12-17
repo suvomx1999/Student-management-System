@@ -6290,3 +6290,11 @@ insert into STUDENTS values(31,"CSE", "thilagesh@gmail.com","Thilagesh") [42122-
 	at java.base/java.lang.Thread.run(Thread.java:1575)
 2025-12-16 23:19:41 jdbc[3]: exception
 org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-214]
+2025-12-17 12:44:14 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-214]
+2025-12-17 14:23:30 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-214]
+2025-12-17 14:24:19 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-214]
+2025-12-17 14:35:08 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-214]
