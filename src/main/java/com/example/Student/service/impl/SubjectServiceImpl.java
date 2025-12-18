@@ -20,6 +20,11 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
+    public List<Subject> listAll() {
+        return repo.findAll();
+    }
+
+    @Override
     public List<Subject> listByDepartmentName(String departmentName) {
         return repo.findByDepartment_Name(departmentName);
     }

@@ -19,7 +19,10 @@ public class SubjectController {
     }
 
     @GetMapping
-    public List<Subject> listByDepartment(@RequestParam String department) {
+    public List<Subject> list(@RequestParam(required = false) String department) {
+        if (department == null || department.isBlank() || department.equalsIgnoreCase("All")) {
+            return service.listAll();
+        }
         return service.listByDepartmentName(department);
     }
 

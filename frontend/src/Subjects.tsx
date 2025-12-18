@@ -22,10 +22,6 @@ function Subjects() {
   }
 
   async function loadSubjects(dept: string) {
-    if (dept === 'All') {
-      setSubjects([])
-      return
-    }
     setLoading(true)
     setError(null)
     try {
@@ -140,11 +136,9 @@ function Subjects() {
               <div className="inline-block w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
               <p className="mt-4 text-gray-600">Loading subjects...</p>
             </div>
-          ) : selected === 'All' ? (
-            <div className="p-6 text-sm text-gray-600">Select a department to view subjects</div>
           ) : subjects.length === 0 ? (
             <div className="p-12 text-center">
-              <p className="text-gray-600 font-medium">No subjects for this department yet</p>
+              <p className="text-gray-600 font-medium">No subjects found</p>
             </div>
           ) : (
             <div className="overflow-x-auto">

@@ -6,11 +6,6 @@ mvn spring-boot:run
 lsof -i :8081
 
 App runs at http://localhost:8081 
-H2 console: http://localhost:8081/h2-console
-
-JBDC url: jdbc:h2:file:./data/studentsdb
-Username: sa
-Password: 
 
 For UI
 
