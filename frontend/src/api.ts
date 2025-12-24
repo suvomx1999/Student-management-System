@@ -70,6 +70,13 @@ export async function getDepartments(): Promise<Department[]> {
   return res.json()
 }
 
+export async function getStudentById(id: number): Promise<Student> {
+  const res = await fetch(`${API_BASE}/api/students/${id}`)
+  if (res.status === 404) throw new Error('Student not found')
+  if (!res.ok) throw new Error('Failed to load student')
+  return res.json()
+}
+
 export async function getSubjectsByDepartment(department: string): Promise<Subject[]> {
   const res = await fetch(`${API_BASE}/api/subjects?department=${encodeURIComponent(department)}`)
   if (!res.ok) throw new Error('Failed to load subjects')

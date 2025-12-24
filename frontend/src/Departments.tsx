@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getStudents, type Student } from './api'
-import { GraduationCap, Filter, Users, ArrowLeft } from 'lucide-react'
+import { GraduationCap, Filter, Users, ArrowLeft, LogOut } from 'lucide-react'
 
 function Departments() {
   const [students, setStudents] = useState<Student[]>([])
@@ -9,6 +9,10 @@ function Departments() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const navigate = useNavigate()
+  function onLogout() {
+    localStorage.removeItem('isAuthenticated')
+    navigate('/', { replace: true })
+  }
 
   async function load() {
     setLoading(true)
@@ -64,6 +68,19 @@ function Departments() {
                 <Users className="w-4 h-4" />
                 <span className="font-medium">{filtered.length} Shown</span>
               </div>
+              <button
+                onClick={() => navigate(`/overview/${selectedDept}`)}
+                className="px-3 py-2 border-2 border-gray-300 bg-white text-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400"
+              >
+                Overview
+              </button>
+              <button
+                onClick={onLogout}
+                className="px-3 py-2 border-2 border-gray-300 bg-white text-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400 flex items-center gap-2"
+              >
+                <LogOut className="w-4 h-4" />
+                Logout
+              </button>
               <button
                 onClick={() => navigate('/app')}
                 className="px-3 py-2 border-2 border-gray-300 bg-white text-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400 flex items-center gap-2"
@@ -126,7 +143,15 @@ function Departments() {
                 <tbody className="divide-y divide-gray-100">
                   {filtered.map((s) => (
                     <tr key={s.id} className="hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50">
-                      <td className="px-6 py-4 font-medium text-gray-900">{s.name}</td>
+                      <td className="px-6 py-4 font-medium text-gray-900">
+                        <button
+                          onClick={() => s.id != null && navigate(`/students/${s.id}`)}
+                          className="hover:underline"
+                          title="View Profile"
+                        >
+                          {s.name}
+                        </button>
+                      </td>
                       <td className="px-6 py-4 text-sm text-gray-600">{s.department || '-'}</td>
                       <td className="px-6 py-4 text-sm text-gray-600">{s.cgpa != null ? s.cgpa.toFixed(2) : '-'}</td>
                     </tr>

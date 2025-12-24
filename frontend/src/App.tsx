@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import { createStudent, deleteStudent, getStudents, updateStudent, type Student } from './api'
-import { Users, Plus, Edit2, Trash2, X, Search, GraduationCap } from 'lucide-react'
+import { Users, Plus, Edit2, Trash2, X, Search, GraduationCap, LogOut } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 function App() {
@@ -81,6 +81,10 @@ function App() {
   }
 
   const navigate = useNavigate()
+  function onLogout() {
+    localStorage.removeItem('isAuthenticated')
+    navigate('/', { replace: true })
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
       <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-10">
@@ -117,6 +121,37 @@ function App() {
                 className="px-3 py-2 border-2 border-gray-300 bg-white text-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400"
               >
                 Subjects
+              </button>
+              <button
+                onClick={() => navigate('/subjects')}
+                className="px-3 py-2 border-2 border-gray-300 bg-white text-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400"
+              >
+                Subjects
+              </button>
+              <button
+                onClick={() => navigate('/search')}
+                className="px-3 py-2 border-2 border-gray-300 bg-white text-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400"
+              >
+                Search
+              </button>
+              <button
+                onClick={() => navigate('/bulk')}
+                className="px-3 py-2 border-2 border-gray-300 bg-white text-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400"
+              >
+                Bulk
+              </button>
+              <button
+                onClick={() => navigate('/data')}
+                className="px-3 py-2 border-2 border-gray-300 bg-white text-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400"
+              >
+                Data
+              </button>
+              <button
+                onClick={onLogout}
+                className="px-3 py-2 border-2 border-gray-300 bg-white text-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400 flex items-center gap-2"
+              >
+                <LogOut className="w-4 h-4" />
+                Logout
               </button>
             </div>
           </div>
@@ -243,7 +278,13 @@ function App() {
                           <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
                             {(s.name || '?').charAt(0).toUpperCase()}
                           </div>
-                          <span className="font-medium text-gray-900">{s.name}</span>
+                          <button
+                            onClick={() => s.id != null && navigate(`/students/${s.id}`)}
+                            className="font-medium text-gray-900 hover:underline"
+                            title="View Profile"
+                          >
+                            {s.name}
+                          </button>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">{s.department || '-'}</td>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getStudents, updateCgpa, createStudent, deleteStudent, type Student } from './api'
-import { Users, ArrowLeft, Edit2, Trash2, Plus } from 'lucide-react'
+import { Users, ArrowLeft, Edit2, Trash2, Plus, LogOut } from 'lucide-react'
 
 function Results() {
   const [students, setStudents] = useState<Student[]>([])
@@ -13,6 +13,10 @@ function Results() {
   const [newName, setNewName] = useState('')
   const [newCgpa, setNewCgpa] = useState<string>('')
   const navigate = useNavigate()
+  function onLogout() {
+    localStorage.removeItem('isAuthenticated')
+    navigate('/', { replace: true })
+  }
 
   async function load() {
     setLoading(true)
@@ -99,6 +103,13 @@ function Results() {
             >
               <Plus className="w-4 h-4" />
               {showAddForm ? 'Close' : 'Add Student'}
+            </button>
+            <button
+              onClick={onLogout}
+              className="px-4 py-2 border-2 border-gray-300 bg-white text-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400 flex items-center gap-2"
+            >
+              <LogOut className="w-4 h-4" />
+              Logout
             </button>
             <button
               onClick={() => navigate('/app')}
@@ -191,7 +202,15 @@ function Results() {
                 <tbody className="divide-y divide-gray-100">
                   {students.map((s) => (
                     <tr key={s.id} className="hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50">
-                      <td className="px-6 py-4 font-medium text-gray-900">{s.name}</td>
+                      <td className="px-6 py-4 font-medium text-gray-900">
+                        <button
+                          onClick={() => s.id != null && navigate(`/students/${s.id}`)}
+                          className="hover:underline"
+                          title="View Profile"
+                        >
+                          {s.name}
+                        </button>
+                      </td>
                       <td className="px-6 py-4 text-sm text-gray-600">
                         {editingId === s.id ? (
                           <div className="flex items-center gap-2">

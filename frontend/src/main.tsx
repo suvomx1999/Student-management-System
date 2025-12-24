@@ -8,6 +8,12 @@ import ProtectedRoute from './ProtectedRoute'
 import Results from './Results'
 import Departments from './Departments'
 import Subjects from './Subjects'
+import StudentProfile from './StudentProfile'
+import DepartmentOverview from './DepartmentOverview'
+import Analytics from './Analytics'
+import Search from './Search'
+import Bulk from './Bulk'
+import Data from './Data'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -43,6 +49,54 @@ createRoot(document.getElementById('root')!).render(
           element={
             <ProtectedRoute>
               <Subjects />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/students/:id"
+          element={
+            <ProtectedRoute>
+              <StudentProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/overview/:name"
+          element={
+            <ProtectedRoute>
+              <DepartmentOverview />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/analytics"
+          element={
+            <ProtectedRoute>
+              <Analytics />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/search"
+          element={
+            <ProtectedRoute>
+              <Search />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/bulk"
+          element={
+            <ProtectedRoute>
+              <Bulk />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/data"
+          element={
+            <ProtectedRoute>
+              <Data />
             </ProtectedRoute>
           }
         />
