@@ -1,0 +1,235 @@
+import { useState, useEffect } from 'react'
+import Layout from './components/Layout'
+import { Plus, Bell, Trash2, Calendar, AlertCircle, Info, CheckCircle2, X } from 'lucide-react'
+
+type Priority = 'high' | 'normal' | 'low'
+
+type Notice = {
+  id: string
+  title: string
+  content: string
+  date: string
+  priority: Priority
+}
+
+export default function Notices() {
+  const [notices, setNotices] = useState<Notice[]>([])
+  const [showForm, setShowForm] = useState(false)
+  const [form, setForm] = useState<Omit<Notice, 'id' | 'date'>>({
+    title: '',
+    content: '',
+    priority: 'normal'
+  })
+  const [userRole, setUserRole] = useState<string | null>(null)
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user')
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser)
+        setUserRole(user.role)
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    const saved = localStorage.getItem('notices')
+    if (saved) {
+      setNotices(JSON.parse(saved))
+    } else {
+      // Add some sample notices if empty
+      const samples: Notice[] = [
+        {
+          id: '1',
+          title: 'Final Exam Schedule Released',
+          content: 'The final examination schedule for Spring 2024 has been published. Please check the department notice board.',
+          date: new Date().toISOString().split('T')[0],
+          priority: 'high'
+        },
+        {
+          id: '2',
+          title: 'Campus Maintenance',
+          content: 'Library services will be unavailable this Saturday due to scheduled maintenance.',
+          date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
+          priority: 'normal'
+        }
+      ]
+      setNotices(samples)
+      localStorage.setItem('notices', JSON.stringify(samples))
+    }
+  }, [])
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    const newNotice: Notice = {
+      ...form,
+      id: Date.now().toString(),
+      date: new Date().toISOString().split('T')[0]
+    }
+    const updated = [newNotice, ...notices]
+    setNotices(updated)
+    localStorage.setItem('notices', JSON.stringify(updated))
+    setForm({ title: '', content: '', priority: 'normal' })
+    setShowForm(false)
+  }
+
+  function deleteNotice(id: string) {
+    if (!confirm('Are you sure you want to delete this notice?')) return
+    const updated = notices.filter(n => n.id !== id)
+    setNotices(updated)
+    localStorage.setItem('notices', JSON.stringify(updated))
+  }
+
+  function getPriorityColor(priority: Priority) {
+    switch (priority) {
+      case 'high': return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border-red-200 dark:border-red-800'
+      case 'normal': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200 dark:border-blue-800'
+      case 'low': return 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+    }
+  }
+
+  function getPriorityIcon(priority: Priority) {
+    switch (priority) {
+      case 'high': return <AlertCircle className="w-5 h-5" />
+      case 'normal': return <Info className="w-5 h-5" />
+      case 'low': return <CheckCircle2 className="w-5 h-5" />
+    }
+  }
+
+  return (
+    <Layout 
+      title="Notices & Announcements" 
+      actions={
+        userRole === 'ADMIN' ? (
+        <button
+          onClick={() => setShowForm(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm font-medium"
+        >
+          <Plus className="w-4 h-4" />
+          Post New Notice
+        </button>
+        ) : null
+      }
+    >
+      <div className="space-y-6">
+        {/* Form Modal */}
+        {showForm && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-200">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200 dark:border-slate-700">
+              <div className="p-6 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Post New Notice</h3>
+                <button 
+                  onClick={() => setShowForm(false)}
+                  className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full text-slate-500 dark:text-slate-400 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              
+              <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Title</label>
+                  <input
+                    type="text"
+                    value={form.title}
+                    onChange={e => setForm({ ...form, title: e.target.value })}
+                    className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                    placeholder="e.g., Semester Schedule Update"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Priority</label>
+                  <select
+                    value={form.priority}
+                    onChange={e => setForm({ ...form, priority: e.target.value as Priority })}
+                    className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                  >
+                    <option value="high">High Priority</option>
+                    <option value="normal">Normal Priority</option>
+                    <option value="low">Low Priority</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Content</label>
+                  <textarea
+                    value={form.content}
+                    onChange={e => setForm({ ...form, content: e.target.value })}
+                    rows={4}
+                    className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all resize-none"
+                    placeholder="Write the full notice content here..."
+                    required
+                  />
+                </div>
+
+                <div className="pt-4 flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowForm(false)}
+                    className="px-4 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg font-medium transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium shadow-sm transition-colors"
+                  >
+                    Post Notice
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Notices Grid */}
+        <div className="grid gap-4">
+          {notices.length === 0 ? (
+            <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+              <div className="bg-slate-50 dark:bg-slate-700 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Bell className="w-8 h-8 text-slate-400 dark:text-slate-500" />
+              </div>
+              <h3 className="text-lg font-medium text-slate-900 dark:text-white">No notices yet</h3>
+              <p className="text-slate-500 dark:text-slate-400">Create a new notice to inform students and faculty.</p>
+            </div>
+          ) : (
+            notices.map(notice => (
+              <div 
+                key={notice.id} 
+                className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow relative group"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 border ${getPriorityColor(notice.priority)}`}>
+                        {getPriorityIcon(notice.priority)}
+                        {notice.priority.charAt(0).toUpperCase() + notice.priority.slice(1)} Priority
+                      </span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        {new Date(notice.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{notice.title}</h3>
+                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">{notice.content}</p>
+                  </div>
+                  {userRole === 'ADMIN' && (
+                  <button
+                    onClick={() => deleteNotice(notice.id)}
+                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                    title="Delete Notice"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </Layout>
+  )
+}

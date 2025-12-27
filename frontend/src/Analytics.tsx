@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { getStudents, type Student } from './api'
-import { BarChart3, ArrowLeft, GraduationCap } from 'lucide-react'
+import Layout from './components/Layout'
+import { BarChart3, Users, Calculator } from 'lucide-react'
 
 function Analytics() {
   const [students, setStudents] = useState<Student[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const navigate = useNavigate()
 
   useEffect(() => {
     async function load() {
@@ -57,75 +56,110 @@ function Analytics() {
     return buckets.map((b, i) => ({ label: b.label, count: counts[i] }))
   }, [students])
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-      <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-10">
-        <div className="mx-auto max-w-6xl px-6 py-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl">
-              <GraduationCap className="w-6 h-6 text-white" />
-            </div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Results Analytics
-            </h1>
-          </div>
-          <button
-            onClick={() => navigate('/app')}
-            className="px-3 py-2 border-2 border-gray-300 bg-white text-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400 flex items-center gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to App
-          </button>
-        </div>
-      </header>
+  const overallAvg = useMemo(() => {
+    if (students.length === 0) return 0
+    const total = students.reduce((acc, s) => acc + (s.cgpa || 0), 0)
+    return (total / students.length).toFixed(2)
+  }, [students])
 
-      <main className="mx-auto max-w-6xl px-6 py-8">
+  return (
+    <Layout title="Results Analytics">
+      <div className="space-y-6">
+        {/* Stats Grid */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-blue-50 text-blue-600 rounded-lg">
+                <Users className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-slate-500">Total Students</p>
+                <h3 className="text-2xl font-bold text-slate-900">{students.length}</h3>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-lg">
+                <Calculator className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-slate-500">Average CGPA</p>
+                <h3 className="text-2xl font-bold text-slate-900">{overallAvg}</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {error && (
-          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+          <div className="p-4 bg-red-50 text-red-600 rounded-xl border border-red-100 text-sm">
             {error}
           </div>
         )}
+
         {loading ? (
-          <div className="p-12 text-center">
-            <div className="inline-block w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
-            <p className="mt-4 text-gray-600">Loading analytics...</p>
-          </div>
+          <div className="p-8 text-center text-slate-500">Loading analytics...</div>
         ) : (
           <>
-            <div className="rounded-2xl border border-gray-200 bg-white shadow-xl overflow-hidden mb-8">
-              <div className="p-6 border-b border-gray-100 flex items-center gap-3">
-                <BarChart3 className="w-5 h-5 text-gray-500" />
-                <h2 className="text-lg font-semibold text-gray-900">CGPA Distribution</h2>
+            {/* Distribution Chart */}
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+              <div className="p-6 border-b border-slate-100 flex items-center gap-3">
+                <BarChart3 className="w-5 h-5 text-slate-500" />
+                <h2 className="text-lg font-semibold text-slate-900">CGPA Distribution</h2>
               </div>
-              <div className="p-6 grid grid-cols-1 sm:grid-cols-5 gap-4">
-                {dist.map((b) => (
-                  <div key={b.label} className="text-center">
-                    <div className="text-sm text-gray-600">{b.label}</div>
-                    <div className="mt-1 text-2xl font-bold text-gray-900">{b.count}</div>
-                  </div>
-                ))}
+              <div className="p-6">
+                <div className="grid grid-cols-5 gap-4 h-48 items-end">
+                  {dist.map((b) => {
+                    const maxCount = Math.max(...dist.map(d => d.count))
+                    const height = maxCount > 0 ? (b.count / maxCount) * 100 : 0
+                    return (
+                      <div key={b.label} className="flex flex-col items-center gap-2 h-full justify-end group">
+                        <div className="relative w-full max-w-[60px]">
+                          <div 
+                            className="w-full bg-indigo-100 rounded-t-lg transition-all duration-500 group-hover:bg-indigo-200"
+                            style={{ height: `${height}%`, minHeight: height > 0 ? '4px' : '0' }}
+                          />
+                          <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-sm font-bold text-slate-700 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {b.count}
+                          </div>
+                        </div>
+                        <div className="text-xs font-medium text-slate-500">{b.label}</div>
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
             </div>
 
-            <div className="rounded-2xl border border-gray-200 bg-white shadow-xl overflow-hidden">
-              <div className="p-6 border-b border-gray-100">
-                <h2 className="text-lg font-semibold text-gray-900">Average CGPA by Department</h2>
+            {/* Department Averages */}
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+              <div className="p-6 border-b border-slate-100">
+                <h2 className="text-lg font-semibold text-slate-900">Average CGPA by Department</h2>
               </div>
               <div className="overflow-x-auto">
-                <table className="min-w-full">
-                  <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
-                    <tr>
-                      <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">Department</th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">Avg CGPA</th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">Count</th>
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50/50 border-b border-slate-200">
+                      <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Department</th>
+                      <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Avg CGPA</th>
+                      <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Count</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-slate-100">
                     {deptAvg.map((row) => (
-                      <tr key={row.dept} className="hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50">
-                        <td className="px-6 py-4 font-medium text-gray-900">{row.dept}</td>
-                        <td className="px-6 py-4 text-sm text-gray-600">{row.avg ?? '-'}</td>
-                        <td className="px-6 py-4 text-sm text-gray-600">{row.count}</td>
+                      <tr key={row.dept} className="hover:bg-slate-50/80 transition-colors">
+                        <td className="p-4 font-medium text-slate-900">{row.dept}</td>
+                        <td className="p-4">
+                          <span className={`
+                            inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                            ${(row.avg || 0) >= 3.5 ? 'bg-green-100 text-green-800' : 
+                              (row.avg || 0) >= 3.0 ? 'bg-blue-100 text-blue-800' : 
+                              'bg-yellow-100 text-yellow-800'}
+                          `}>
+                            {row.avg ?? '-'}
+                          </span>
+                        </td>
+                        <td className="p-4 text-slate-600">{row.count}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -134,8 +168,8 @@ function Analytics() {
             </div>
           </>
         )}
-      </main>
-    </div>
+      </div>
+    </Layout>
   )
 }
 

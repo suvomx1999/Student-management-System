@@ -38,6 +38,9 @@ public class StudentServiceImpl implements StudentService {
             existing.setName(student.getName());
             existing.setDepartment(student.getDepartment());
             existing.setEmail(student.getEmail());
+            if (student.getPassword() != null) {
+                existing.setPassword(student.getPassword());
+            }
             if (student.getCgpa() != null) {
                 existing.setCgpa(student.getCgpa());
             }

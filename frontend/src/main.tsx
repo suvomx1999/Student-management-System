@@ -12,8 +12,10 @@ import StudentProfile from './StudentProfile'
 import DepartmentOverview from './DepartmentOverview'
 import Analytics from './Analytics'
 import Search from './Search'
-import Bulk from './Bulk'
 import Data from './Data'
+import Teachers from './Teachers'
+import Attendance from './Attendance'
+import Notices from './Notices'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -23,7 +25,7 @@ createRoot(document.getElementById('root')!).render(
         <Route
           path="/app"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['ADMIN']}>
               <App />
             </ProtectedRoute>
           }
@@ -31,7 +33,7 @@ createRoot(document.getElementById('root')!).render(
         <Route
           path="/results"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['ADMIN']}>
               <Results />
             </ProtectedRoute>
           }
@@ -39,7 +41,7 @@ createRoot(document.getElementById('root')!).render(
         <Route
           path="/departments"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['ADMIN']}>
               <Departments />
             </ProtectedRoute>
           }
@@ -47,7 +49,7 @@ createRoot(document.getElementById('root')!).render(
         <Route
           path="/subjects"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['ADMIN']}>
               <Subjects />
             </ProtectedRoute>
           }
@@ -55,7 +57,7 @@ createRoot(document.getElementById('root')!).render(
         <Route
           path="/students/:id"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['ADMIN']}>
               <StudentProfile />
             </ProtectedRoute>
           }
@@ -63,7 +65,7 @@ createRoot(document.getElementById('root')!).render(
         <Route
           path="/overview/:name"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['ADMIN']}>
               <DepartmentOverview />
             </ProtectedRoute>
           }
@@ -71,7 +73,7 @@ createRoot(document.getElementById('root')!).render(
         <Route
           path="/analytics"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['ADMIN']}>
               <Analytics />
             </ProtectedRoute>
           }
@@ -79,24 +81,48 @@ createRoot(document.getElementById('root')!).render(
         <Route
           path="/search"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['ADMIN']}>
               <Search />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/bulk"
-          element={
-            <ProtectedRoute>
-              <Bulk />
             </ProtectedRoute>
           }
         />
         <Route
           path="/data"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['ADMIN']}>
               <Data />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teachers"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN']}>
+              <Teachers />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/attendance"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN']}>
+              <Attendance />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/notices"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN', 'STUDENT']}>
+              <Notices />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-profile"
+          element={
+            <ProtectedRoute allowedRoles={['STUDENT']}>
+              <StudentProfile />
             </ProtectedRoute>
           }
         />

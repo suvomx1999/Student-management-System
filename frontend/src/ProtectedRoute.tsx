@@ -3,11 +3,14 @@ import { useEffect } from 'react'
 
 type Props = {
   children: React.ReactNode
+  allowedRoles?: string[]
 }
 
-function ProtectedRoute({ children }: Props) {
+function ProtectedRoute({ children, allowedRoles }: Props) {
   const navigate = useNavigate()
   const isAuth = localStorage.getItem('isAuthenticated') === 'true'
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
+
   useEffect(() => {
     if (!isAuth) return
     let timeout: number | undefined
@@ -22,6 +25,7 @@ function ProtectedRoute({ children }: Props) {
       const now = Date.now()
       if (now - lastActive >= limitMs) {
         localStorage.removeItem('isAuthenticated')
+        localStorage.removeItem('user')
         navigate('/', { replace: true })
       } else {
         reset()
@@ -35,9 +39,20 @@ function ProtectedRoute({ children }: Props) {
       events.forEach((ev) => window.removeEventListener(ev, reset))
     }
   }, [navigate, isAuth])
+
   if (!isAuth) {
     return <Navigate to="/" replace />
   }
+
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    // If student tries to access admin route, send to profile
+    if (user.role === 'STUDENT') {
+      return <Navigate to="/my-profile" replace />
+    }
+    // Otherwise send to home/login
+    return <Navigate to="/" replace />
+  }
+
   return <>{children}</>
 }
 

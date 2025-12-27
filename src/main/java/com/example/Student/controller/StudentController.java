@@ -35,6 +35,8 @@ public class StudentController {
         Student toCreate = new Student();
         toCreate.setName(dto.getName());
         toCreate.setEmail(dto.getEmail());
+        // Default password if not provided
+        toCreate.setPassword(dto.getPassword() != null ? dto.getPassword() : "password");
         toCreate.setCgpa(dto.getCgpa());
         toCreate.setDepartment(dept);
         Student created = service.createStudent(toCreate);
@@ -61,6 +63,9 @@ public class StudentController {
         Student toUpdate = new Student();
         toUpdate.setName(dto.getName());
         toUpdate.setEmail(dto.getEmail());
+        if (dto.getPassword() != null) {
+            toUpdate.setPassword(dto.getPassword());
+        }
         toUpdate.setCgpa(dto.getCgpa());
         toUpdate.setDepartment(dept);
         try {

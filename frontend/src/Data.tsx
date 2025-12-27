@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { createStudent, getStudents, type Student } from './api'
-import { ArrowLeft, UploadCloud, DownloadCloud, GraduationCap } from 'lucide-react'
+import Layout from './components/Layout'
+import { UploadCloud, DownloadCloud, FileSpreadsheet, AlertCircle } from 'lucide-react'
 
 function toCsv(rows: Student[]) {
   const header = ['name', 'department', 'email', 'cgpa']
@@ -46,7 +46,6 @@ function Data() {
   const [error, setError] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
   const [uploadCount, setUploadCount] = useState<number | null>(null)
-  const navigate = useNavigate()
   const fileRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -102,99 +101,119 @@ function Data() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-      <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-10">
-        <div className="mx-auto max-w-6xl px-6 py-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl">
-              <GraduationCap className="w-6 h-6 text-white" />
-            </div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Import / Export
-            </h1>
-          </div>
-          <button
-            onClick={() => navigate('/app')}
-            className="px-3 py-2 border-2 border-gray-300 bg-white text-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400 flex items-center gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to App
-          </button>
-        </div>
-      </header>
-      <main className="mx-auto max-w-6xl px-6 py-8">
+    <Layout title="Import / Export">
+      <div className="space-y-6">
         {error && (
-          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+          <div className="p-4 bg-red-50 text-red-600 rounded-xl border border-red-100 text-sm">
             {error}
           </div>
         )}
-        <div className="mb-6 rounded-2xl border border-gray-200 bg-white shadow-xl overflow-hidden">
-          <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="rounded-xl border border-gray-200 p-4">
-              <div className="flex items-center gap-2 text-gray-700">
-                <DownloadCloud className="w-5 h-5" />
-                <span className="font-medium">Export Students (CSV)</span>
+
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Export Card */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-3 bg-blue-50 text-blue-600 rounded-lg">
+                <DownloadCloud className="w-6 h-6" />
               </div>
-              <p className="mt-2 text-sm text-gray-600">Downloads current students as CSV with columns: name, department, email, cgpa.</p>
-              <button
-                onClick={exportCsv}
-                className="mt-3 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-medium shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
-              >
-                Download CSV
-              </button>
+              <h3 className="text-lg font-semibold text-slate-900">Export Data</h3>
             </div>
-            <div className="rounded-xl border border-gray-200 p-4">
-              <div className="flex items-center gap-2 text-gray-700">
-                <UploadCloud className="w-5 h-5" />
-                <span className="font-medium">Import Students (CSV)</span>
+            <p className="text-slate-500 text-sm mb-6 flex-1">
+              Download all student records as a CSV file. The file will include name, department, email, and CGPA.
+            </p>
+            <button
+              onClick={exportCsv}
+              className="w-full py-2.5 bg-white border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all font-medium shadow-sm"
+            >
+              Download CSV
+            </button>
+          </div>
+
+          {/* Import Card */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col">
+             <div className="flex items-center gap-3 mb-4">
+              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-lg">
+                <UploadCloud className="w-6 h-6" />
               </div>
-              <p className="mt-2 text-sm text-gray-600">Upload a CSV with columns: name, department, email, cgpa. Missing columns are treated as empty.</p>
+              <h3 className="text-lg font-semibold text-slate-900">Import Data</h3>
+            </div>
+            <p className="text-slate-500 text-sm mb-6 flex-1">
+              Upload a CSV file to add multiple students at once. Required columns: name, department, email, cgpa.
+            </p>
+            <div className="relative">
               <input
                 ref={fileRef}
                 type="file"
                 accept=".csv,text/csv"
                 onChange={importCsv}
                 disabled={uploading}
-                className="mt-3"
+                className="hidden"
+                id="csv-upload"
               />
-              {uploading && <p className="mt-2 text-sm text-gray-600">Uploading...</p>}
-              {uploadCount != null && <p className="mt-2 text-sm text-gray-600">Imported {uploadCount} students</p>}
+              <label
+                htmlFor="csv-upload"
+                className={`
+                  w-full py-2.5 flex items-center justify-center gap-2 rounded-lg font-medium shadow-sm cursor-pointer transition-all
+                  ${uploading 
+                    ? 'bg-slate-100 text-slate-400 cursor-not-allowed' 
+                    : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                  }
+                `}
+              >
+                {uploading ? 'Importing...' : 'Select CSV File'}
+              </label>
             </div>
+            {uploadCount != null && (
+              <div className="mt-4 p-3 bg-green-50 text-green-700 text-sm rounded-lg flex items-center gap-2">
+                <AlertCircle className="w-4 h-4" />
+                Successfully imported {uploadCount} students
+              </div>
+            )}
           </div>
         </div>
-        <div className="rounded-2xl border border-gray-200 bg-white shadow-xl overflow-hidden">
+
+        {/* Data Preview */}
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+          <div className="p-6 border-b border-slate-100 flex items-center gap-3">
+            <FileSpreadsheet className="w-5 h-5 text-slate-500" />
+            <h3 className="font-semibold text-slate-900">Current Data Preview</h3>
+          </div>
           {loading ? (
-            <div className="p-12 text-center">
-              <div className="inline-block w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
-              <p className="mt-4 text-gray-600">Loading students...</p>
-            </div>
+             <div className="p-8 text-center text-slate-500">Loading data...</div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full">
-                <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
-                  <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">Name</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">Department</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">Email</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">CGPA</th>
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-50/50 border-b border-slate-200">
+                    <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Name</th>
+                    <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Department</th>
+                    <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Email</th>
+                    <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">CGPA</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {students.map((s) => (
-                    <tr key={s.id} className="hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50">
-                      <td className="px-6 py-4 font-medium text-gray-900">{s.name}</td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{s.department || '-'}</td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{s.email || '-'}</td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{s.cgpa != null ? s.cgpa.toFixed(2) : '-'}</td>
+                <tbody className="divide-y divide-slate-100">
+                  {students.slice(0, 5).map((s) => (
+                    <tr key={s.id} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="p-4 font-medium text-slate-900">{s.name}</td>
+                      <td className="p-4 text-slate-600">{s.department || '-'}</td>
+                      <td className="p-4 text-slate-600">{s.email || '-'}</td>
+                      <td className="p-4 text-slate-600">{s.cgpa != null ? s.cgpa.toFixed(2) : '-'}</td>
                     </tr>
                   ))}
+                  {students.length > 5 && (
+                    <tr>
+                      <td colSpan={4} className="p-4 text-center text-sm text-slate-500 bg-slate-50/30">
+                        ... and {students.length - 5} more records
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
           )}
         </div>
-      </main>
-    </div>
+      </div>
+    </Layout>
   )
 }
 

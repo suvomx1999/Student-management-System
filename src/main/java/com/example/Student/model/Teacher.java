@@ -7,8 +7,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
-@Table(name = "students")
-public class Student {
+@Table(name = "teachers")
+public class Teacher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -19,22 +19,20 @@ public class Student {
     @Email
     private String email;
 
-    @JsonIgnore
-    private String password;
-
-    private Double cgpa;
+    private String designation;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
     @JsonIgnore
     private Department department;
 
-    public Student() {}
+    public Teacher() {}
 
-    public Student(String name, Department department, String email) {
+    public Teacher(String name, Department department, String email, String designation) {
         this.name = name;
         this.department = department;
         this.email = email;
+        this.designation = designation;
     }
 
     public Integer getId() { return id; }
@@ -43,10 +41,8 @@ public class Student {
     public void setName(String name) { this.name = name; }
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
-    public Double getCgpa() { return cgpa; }
-    public void setCgpa(Double cgpa) { this.cgpa = cgpa; }
+    public String getDesignation() { return designation; }
+    public void setDesignation(String designation) { this.designation = designation; }
 
     public Department getDepartment() { return department; }
     public void setDepartment(Department department) { this.department = department; }

@@ -3,6 +3,7 @@ export type Student = {
   name: string
   department?: string
   email?: string
+  password?: string
   cgpa?: number
 }
 
@@ -15,6 +16,14 @@ export type Subject = {
   id: number
   name: string
   department?: string
+}
+
+export type Teacher = {
+  id?: number
+  name: string
+  department?: string
+  email?: string
+  designation?: string
 }
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? ''
@@ -96,4 +105,74 @@ export async function createSubject(name: string, department: string): Promise<S
 export async function deleteSubject(id: number): Promise<void> {
   const res = await fetch(`${API_BASE}/api/subjects/${id}`, { method: 'DELETE' })
   if (!res.ok) throw new Error('Failed to delete subject')
+}
+
+export async function getTeachers(): Promise<Teacher[]> {
+  const res = await fetch(`${API_BASE}/api/teachers`)
+  if (!res.ok) throw new Error('Failed to load teachers')
+  return res.json()
+}
+
+export async function createTeacher(body: Omit<Teacher, 'id'>): Promise<Teacher> {
+  const res = await fetch(`${API_BASE}/api/teachers`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(body),
+  })
+  if (!res.ok) throw new Error('Failed to create teacher')
+  return res.json()
+}
+
+export async function updateTeacher(id: number, body: Omit<Teacher, 'id'>): Promise<Teacher> {
+  const res = await fetch(`${API_BASE}/api/teachers/${id}`, {
+    method: 'PUT',
+    headers,
+    body: JSON.stringify(body),
+  })
+  if (!res.ok) throw new Error('Failed to update teacher')
+  return res.json()
+}
+
+export async function deleteTeacher(id: number): Promise<void> {
+  const res = await fetch(`${API_BASE}/api/teachers/${id}`, { method: 'DELETE' })
+  if (!res.ok) throw new Error('Failed to delete teacher')
+}
+
+export async function login(email: string, password: string): Promise<{ id: number; name: string; role: string }> {
+  const res = await fetch(`${API_BASE}/api/auth/login`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ email, password }),
+  })
+  if (!res.ok) throw new Error('Invalid credentials')
+  return res.json()
+}
+
+export type Attendance = {
+  id?: number
+  studentId: number
+  studentName?: string
+  date: string
+  status: 'present' | 'absent' | 'late'
+}
+
+export async function getAttendanceByDate(date: string): Promise<Attendance[]> {
+  const res = await fetch(`${API_BASE}/api/attendance?date=${date}`)
+  if (!res.ok) throw new Error('Failed to load attendance')
+  return res.json()
+}
+
+export async function saveAttendance(date: string, attendance: Record<number, string>): Promise<void> {
+  const res = await fetch(`${API_BASE}/api/attendance?date=${date}`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(attendance),
+  })
+  if (!res.ok) throw new Error('Failed to save attendance')
+}
+
+export async function getStudentAttendance(studentId: number): Promise<Attendance[]> {
+  const res = await fetch(`${API_BASE}/api/attendance/student/${studentId}`)
+  if (!res.ok) throw new Error('Failed to load student attendance')
+  return res.json()
 }
