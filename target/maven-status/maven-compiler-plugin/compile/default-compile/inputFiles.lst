@@ -7,10 +7,10 @@
 /Users/suvo/Student/src/main/java/com/example/Student/service/TeacherService.java
 /Users/suvo/Student/src/main/java/com/example/Student/controller/TeacherController.java
 /Users/suvo/Student/src/main/java/com/example/Student/dto/LoginRequest.java
+/Users/suvo/Student/src/main/java/com/example/Student/controller/SpaController.java
 /Users/suvo/Student/src/main/java/com/example/Student/config/CorsConfig.java
 /Users/suvo/Student/src/main/java/com/example/Student/service/DepartmentService.java
 /Users/suvo/Student/src/main/java/com/example/Student/dto/StudentDTO.java
-/Users/suvo/Student/src/main/java/com/example/Student/config/DataSourceConfig.java
 /Users/suvo/Student/src/main/java/com/example/Student/model/Attendance.java
 /Users/suvo/Student/src/main/java/com/example/Student/service/StudentService.java
 /Users/suvo/Student/src/main/java/com/example/Student/model/Student.java
@@ -29,5 +29,4 @@
 /Users/suvo/Student/src/main/java/com/example/Student/model/Teacher.java
 /Users/suvo/Student/src/main/java/com/example/Student/dto/TeacherDTO.java
 /Users/suvo/Student/src/main/java/com/example/Student/controller/StudentController.java
-/Users/suvo/Student/src/main/java/com/example/Student/controller/HomeController.java
 /Users/suvo/Student/src/main/java/com/example/Student/exception/ResourceNotFoundException.java
