@@ -62,7 +62,6 @@ function StudentProfile() {
         name: student.name,
         department: student.department,
         email: student.email,
-        cgpa: student.cgpa,
         password: newPassword 
       })
       setPasswordMessage('Password updated successfully')

@@ -6,6 +6,7 @@ import com.example.Student.model.Teacher;
 import com.example.Student.service.DepartmentService;
 import com.example.Student.service.TeacherService;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,10 +21,12 @@ public class TeacherController {
 
     private final TeacherService service;
     private final DepartmentService departmentService;
+    private final PasswordEncoder passwordEncoder;
 
-    public TeacherController(TeacherService service, DepartmentService departmentService) {
+    public TeacherController(TeacherService service, DepartmentService departmentService, PasswordEncoder passwordEncoder) {
         this.service = service;
         this.departmentService = departmentService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping
@@ -34,6 +37,12 @@ public class TeacherController {
         Teacher toCreate = new Teacher();
         toCreate.setName(dto.getName());
         toCreate.setEmail(dto.getEmail());
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            toCreate.setPassword(passwordEncoder.encode(dto.getPassword()));
+        } else {
+            // Default password for teachers if none provided
+            toCreate.setPassword(passwordEncoder.encode("password"));
+        }
         toCreate.setDesignation(dto.getDesignation());
         toCreate.setDepartment(dept);
         Teacher created = service.createTeacher(toCreate);
@@ -60,6 +69,9 @@ public class TeacherController {
         Teacher toUpdate = new Teacher();
         toUpdate.setName(dto.getName());
         toUpdate.setEmail(dto.getEmail());
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            toUpdate.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
         toUpdate.setDesignation(dto.getDesignation());
         toUpdate.setDepartment(dept);
         try {

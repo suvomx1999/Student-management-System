@@ -15,7 +15,8 @@ import {
   Moon,
   Sun,
   CalendarCheck,
-  FileText
+  FileText,
+  Receipt
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
@@ -67,13 +68,21 @@ export default function Layout({ children, title, actions }: LayoutProps) {
 
   const allNavItems = [
     { to: '/app', icon: LayoutDashboard, label: 'Dashboard', roles: ['ADMIN'] },
+    { to: '/student-dashboard', icon: LayoutDashboard, label: 'Dashboard', roles: ['STUDENT'] },
     { to: '/my-profile', icon: Users, label: 'My Profile', roles: ['STUDENT'] },
+    { to: '/my-results', icon: ClipboardList, label: 'My Results', roles: ['STUDENT'] },
+    { to: '/my-attendance', icon: CalendarCheck, label: 'My Attendance', roles: ['STUDENT'] },
+    { to: '/my-fees', icon: Receipt, label: 'My Fees', roles: ['STUDENT'] },
+    { to: '/teacher-dashboard', icon: LayoutDashboard, label: 'Dashboard', roles: ['TEACHER'] },
+    { to: '/teacher-attendance', icon: CalendarCheck, label: 'Attendance', roles: ['TEACHER'] },
+    { to: '/teacher-results', icon: ClipboardList, label: 'Results', roles: ['TEACHER'] },
     { to: '/results', icon: ClipboardList, label: 'Results', roles: ['ADMIN'] },
     { to: '/departments', icon: Building2, label: 'Departments', roles: ['ADMIN'] },
     { to: '/subjects', icon: BookOpen, label: 'Subjects', roles: ['ADMIN'] },
     { to: '/teachers', icon: Users, label: 'Faculty', roles: ['ADMIN'] },
     { to: '/attendance', icon: CalendarCheck, label: 'Attendance', roles: ['ADMIN'] },
-    { to: '/notices', icon: FileText, label: 'Notices', roles: ['ADMIN', 'STUDENT'] },
+    { to: '/fees', icon: Receipt, label: 'Fees', roles: ['ADMIN'] },
+    { to: '/notices', icon: FileText, label: 'Notices', roles: ['ADMIN', 'STUDENT', 'TEACHER'] },
     { to: '/analytics', icon: BarChart3, label: 'Analytics', roles: ['ADMIN'] },
     { to: '/search', icon: Search, label: 'Search', roles: ['ADMIN'] },
     { to: '/data', icon: Database, label: 'Data', roles: ['ADMIN'] },

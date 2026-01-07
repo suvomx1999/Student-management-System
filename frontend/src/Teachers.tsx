@@ -6,7 +6,7 @@ import { Plus, Search, Pencil, Trash2, Mail, Building2, Briefcase, X } from 'luc
 function Teachers() {
   const [teachers, setTeachers] = useState<Teacher[]>([])
   const [filteredTeachers, setFilteredTeachers] = useState<Teacher[]>([])
-  const [form, setForm] = useState<Omit<Teacher, 'id'>>({ name: '', department: '', email: '', designation: '' })
+  const [form, setForm] = useState<Omit<Teacher, 'id'>>({ name: '', department: '', email: '', designation: '', password: '' })
   const [editingId, setEditingId] = useState<number | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -49,7 +49,7 @@ function Teachers() {
       } else {
         await createTeacher(form)
       }
-      setForm({ name: '', department: '', email: '', designation: '' })
+      setForm({ name: '', department: '', email: '', designation: '', password: '' })
       setEditingId(null)
       setShowForm(false)
       load()
@@ -80,7 +80,7 @@ function Teachers() {
       actions={
         <button
           onClick={() => {
-            setForm({ name: '', department: '', email: '', designation: '' })
+            setForm({ name: '', department: '', email: '', designation: '', password: '' })
             setEditingId(null)
             setShowForm(true)
           }}
@@ -185,6 +185,17 @@ function Teachers() {
                     onChange={e => setForm({ ...form, email: e.target.value })}
                     className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
                     required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Password</label>
+                  <input
+                    type="password"
+                    value={form.password || ''}
+                    onChange={e => setForm({ ...form, password: e.target.value })}
+                    className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                    placeholder={editingId ? "Leave blank to keep current" : "Enter password"}
                   />
                 </div>
 

@@ -6,6 +6,7 @@ import com.example.Student.model.Student;
 import com.example.Student.service.DepartmentService;
 import com.example.Student.service.StudentService;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,10 +22,12 @@ public class StudentController {
 
     private final StudentService service;
     private final DepartmentService departmentService;
+    private final PasswordEncoder passwordEncoder;
 
-    public StudentController(StudentService service, DepartmentService departmentService) {
+    public StudentController(StudentService service, DepartmentService departmentService, PasswordEncoder passwordEncoder) {
         this.service = service;
         this.departmentService = departmentService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping
@@ -36,7 +39,8 @@ public class StudentController {
         toCreate.setName(dto.getName());
         toCreate.setEmail(dto.getEmail());
         // Default password if not provided
-        toCreate.setPassword(dto.getPassword() != null ? dto.getPassword() : "password");
+        String rawPassword = dto.getPassword() != null ? dto.getPassword() : "password";
+        toCreate.setPassword(passwordEncoder.encode(rawPassword));
         toCreate.setCgpa(dto.getCgpa());
         toCreate.setDepartment(dept);
         Student created = service.createStudent(toCreate);
@@ -44,7 +48,10 @@ public class StudentController {
     }
 
     @GetMapping
-    public List<Student> getAllStudents() {
+    public List<Student> getAllStudents(@RequestParam(required = false) String department) {
+        if (department != null && !department.isBlank()) {
+            return service.getStudentsByDepartment(department);
+        }
         return service.getAllStudents();
     }
 
@@ -63,10 +70,9 @@ public class StudentController {
         Student toUpdate = new Student();
         toUpdate.setName(dto.getName());
         toUpdate.setEmail(dto.getEmail());
-        if (dto.getPassword() != null) {
-            toUpdate.setPassword(dto.getPassword());
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            toUpdate.setPassword(passwordEncoder.encode(dto.getPassword()));
         }
-        toUpdate.setCgpa(dto.getCgpa());
         toUpdate.setDepartment(dept);
         try {
             Student updated = service.updateStudent(id, toUpdate);

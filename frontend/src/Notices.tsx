@@ -1,16 +1,9 @@
 import { useState, useEffect } from 'react'
 import Layout from './components/Layout'
 import { Plus, Bell, Trash2, Calendar, AlertCircle, Info, CheckCircle2, X } from 'lucide-react'
+import { getNotices, createNotice, deleteNotice as apiDeleteNotice, type Notice } from './api'
 
 type Priority = 'high' | 'normal' | 'low'
-
-type Notice = {
-  id: string
-  title: string
-  content: string
-  date: string
-  priority: Priority
-}
 
 export default function Notices() {
   const [notices, setNotices] = useState<Notice[]>([])
@@ -21,6 +14,19 @@ export default function Notices() {
     priority: 'normal'
   })
   const [userRole, setUserRole] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+
+  async function loadNotices() {
+    try {
+      setLoading(true)
+      const data = await getNotices()
+      setNotices(data)
+    } catch (e) {
+      console.error('Failed to load notices', e)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user')
@@ -32,52 +38,31 @@ export default function Notices() {
         // ignore
       }
     }
-
-    const saved = localStorage.getItem('notices')
-    if (saved) {
-      setNotices(JSON.parse(saved))
-    } else {
-      // Add some sample notices if empty
-      const samples: Notice[] = [
-        {
-          id: '1',
-          title: 'Final Exam Schedule Released',
-          content: 'The final examination schedule for Spring 2024 has been published. Please check the department notice board.',
-          date: new Date().toISOString().split('T')[0],
-          priority: 'high'
-        },
-        {
-          id: '2',
-          title: 'Campus Maintenance',
-          content: 'Library services will be unavailable this Saturday due to scheduled maintenance.',
-          date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
-          priority: 'normal'
-        }
-      ]
-      setNotices(samples)
-      localStorage.setItem('notices', JSON.stringify(samples))
-    }
+    loadNotices()
   }, [])
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    const newNotice: Notice = {
-      ...form,
-      id: Date.now().toString(),
-      date: new Date().toISOString().split('T')[0]
+    try {
+      await createNotice(form)
+      setForm({ title: '', content: '', priority: 'normal' })
+      setShowForm(false)
+      await loadNotices()
+    } catch (e) {
+      console.error('Failed to create notice', e)
+      alert('Failed to create notice')
     }
-    const updated = [newNotice, ...notices]
-    setNotices(updated)
-    localStorage.setItem('notices', JSON.stringify(updated))
-    setForm({ title: '', content: '', priority: 'normal' })
-    setShowForm(false)
   }
 
-  function deleteNotice(id: string) {
+  async function deleteNotice(id: number) {
     if (!confirm('Are you sure you want to delete this notice?')) return
-    const updated = notices.filter(n => n.id !== id)
-    setNotices(updated)
-    localStorage.setItem('notices', JSON.stringify(updated))
+    try {
+      await apiDeleteNotice(id)
+      await loadNotices()
+    } catch (e) {
+      console.error('Failed to delete notice', e)
+      alert('Failed to delete notice')
+    }
   }
 
   function getPriorityColor(priority: Priority) {
@@ -100,7 +85,7 @@ export default function Notices() {
     <Layout 
       title="Notices & Announcements" 
       actions={
-        userRole === 'ADMIN' ? (
+        ['ADMIN', 'TEACHER'].includes(userRole || '') ? (
         <button
           onClick={() => setShowForm(true)}
           className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm font-medium"
@@ -209,7 +194,7 @@ export default function Notices() {
                       </span>
                       <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
-                        {new Date(notice.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+                        {new Date(notice.date || Date.now()).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
                       </span>
                     </div>
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{notice.title}</h3>
@@ -217,7 +202,7 @@ export default function Notices() {
                   </div>
                   {userRole === 'ADMIN' && (
                   <button
-                    onClick={() => deleteNotice(notice.id)}
+                    onClick={() => notice.id && deleteNotice(notice.id)}
                     className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
                     title="Delete Notice"
                   >

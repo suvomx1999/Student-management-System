@@ -20,8 +20,10 @@ function Login() {
       
       if (user.role === 'ADMIN') {
         navigate('/app', { replace: true })
+      } else if (user.role === 'TEACHER') {
+        navigate('/teacher-dashboard', { replace: true })
       } else {
-        navigate('/my-profile', { replace: true })
+        navigate('/student-dashboard', { replace: true })
       }
     } catch (e) {
       setError('Invalid credentials')
@@ -71,10 +73,11 @@ function Login() {
             {loading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
-        <p className="mt-4 text-xs text-gray-500 text-center space-y-1">
+        <div className="mt-4 text-xs text-gray-500 text-center space-y-1">
           <div>Admin: <span className="font-semibold">Shubashis</span> / <span className="font-semibold">suvo1234</span></div>
           <div>Student: <span className="font-semibold">test@student.com</span> / <span className="font-semibold">password123</span></div>
-        </p>
+          <div>Faculty: Use your email & password</div>
+        </div>
       </div>
     </div>
   )

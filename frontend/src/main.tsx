@@ -14,8 +14,16 @@ import Analytics from './Analytics'
 import Search from './Search'
 import Data from './Data'
 import Teachers from './Teachers'
+import TeacherDashboard from './TeacherDashboard'
+import TeacherAttendance from './TeacherAttendance'
+import TeacherResults from './TeacherResults'
+import StudentDashboard from './StudentDashboard'
+import StudentResults from './StudentResults'
+import StudentAttendance from './StudentAttendance'
+import StudentFees from './StudentFees'
 import Attendance from './Attendance'
 import Notices from './Notices'
+import AdminFees from './AdminFees'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -27,6 +35,49 @@ createRoot(document.getElementById('root')!).render(
           element={
             <ProtectedRoute allowedRoles={['ADMIN']}>
               <App />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teacher-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['TEACHER']}>
+              <TeacherDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teacher-attendance"
+          element={
+            <ProtectedRoute allowedRoles={['TEACHER']}>
+              <TeacherAttendance />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teacher-results"
+          element={
+            <ProtectedRoute allowedRoles={['TEACHER']}>
+              <TeacherResults />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['STUDENT']}>
+              <StudentDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/my-results" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentResults /></ProtectedRoute>} />
+        <Route path="/my-attendance" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentAttendance /></ProtectedRoute>} />
+        <Route path="/my-fees" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentFees /></ProtectedRoute>} />
+        <Route
+          path="/fees"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN']}>
+              <AdminFees />
             </ProtectedRoute>
           }
         />
@@ -113,7 +164,7 @@ createRoot(document.getElementById('root')!).render(
         <Route
           path="/notices"
           element={
-            <ProtectedRoute allowedRoles={['ADMIN', 'STUDENT']}>
+            <ProtectedRoute allowedRoles={['ADMIN', 'STUDENT', 'TEACHER']}>
               <Notices />
             </ProtectedRoute>
           }

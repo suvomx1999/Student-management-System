@@ -1,9 +1,12 @@
 package com.example.Student.service.impl;
 
 import com.example.Student.model.Student;
+import com.example.Student.repository.AttendanceRepository;
+import com.example.Student.repository.ResultRepository;
 import com.example.Student.repository.StudentRepository;
 import com.example.Student.service.StudentService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,9 +15,13 @@ import java.util.Optional;
 public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository repo;
+    private final ResultRepository resultRepository;
+    private final AttendanceRepository attendanceRepository;
 
-    public StudentServiceImpl(StudentRepository repo) {
+    public StudentServiceImpl(StudentRepository repo, ResultRepository resultRepository, AttendanceRepository attendanceRepository) {
         this.repo = repo;
+        this.resultRepository = resultRepository;
+        this.attendanceRepository = attendanceRepository;
     }
 
     @Override
@@ -25,6 +32,11 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<Student> getAllStudents() {
         return repo.findAll();
+    }
+
+    @Override
+    public List<Student> getStudentsByDepartment(String department) {
+        return repo.findByDepartment_Name(department);
     }
 
     @Override
@@ -49,7 +61,10 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    @Transactional
     public void deleteStudent(Integer id) {
+        resultRepository.deleteByStudent_Id(id);
+        attendanceRepository.deleteByStudent_Id(id);
         repo.deleteById(id);
     }
 
